@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Projeto HTML com Axios</title>
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="js/verificaLogin.js"></script>
+
+    <form id="form-usuario" onsubmit="cadastrarUsuario(event)">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome" required><br><br>
+
+        <label for="tipo">Tipo:</label><br>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione...</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Admin">Admin</option>
+            <option value="Fornecedor">Fornecedor</option>
+        </select><br><br>
+
+        <label for="endereco">Endereço:</label><br>
+        <input type="text" id="endereco" name="endereco"><br><br>
+
+        <label for="telefone">Telefone:</label><br>
+        <input type="text" id="telefone" name="telefone"><br><br>
+
+        <label for="documento">Documento:</label><br>
+        <input type="text" id="documento" name="documento"><br><br>
+
+        <label for="senha">Senha:</label><br>
+        <input type="password" id="senha" name="senha" required><br><br>
+
+        <label for="cep">CEP:</label><br>
+        <input type="text" id="cep" name="cep"><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <button onclick="carregarUsuarios()">Carregar Usuários</button>
+    <button onclick="criarUsuario()">Criar Novo Usuário</button>
+    <button onclick="logout()">Sair</button>
+    <ul id="lista-usuarios"></ul>
+
+    <table id="tabela-usuarios" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Endereço</th>
+                <th>Telefone</th>
+                <th>Documento</th>
+                <th>CEP</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- Importando Axios diretamente do CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        function carregarUsuarios() {
+            axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php')
+                .then(function (response) {
+                    const usuarios = response.data;
+                    const tabela = $('#tabela-usuarios').DataTable();
+                    tabela.clear();
+
+                    usuarios.forEach(function (usuario) {
+                        tabela.row.add([
+                            usuario.nome,
+                            usuario.tipo,
+                            usuario.endereco || '-',
+                            usuario.telefone || '-',
+                            usuario.documento || '-',
+                            usuario.cep || '-',
+                            usuario.email
+                        ]);
+                    });
+
+                    tabela.draw();
+                })
+                .catch(function (error) {
+                    console.error('Erro ao carregar usuários:', error);
+                    alert('Ocorreu um erro ao buscar os usuários.');
+                });
+        }
+
+        $(document).ready(function () {
+            $('#tabela-usuarios').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+                }
+            });
+
+            // Carregar usuários na tabela
+            carregarUsuarios();
+        });
+
+        function criarUsuario() {
+            // Capturar os valores dos campos do formulário
+            const nome = document.getElementById('nome').value;
+            const tipo = document.getElementById('tipo').value;
+            const endereco = document.getElementById('endereco').value;
+            const telefone = document.getElementById('telefone').value;
+            const documento = document.getElementById('documento').value;
+            const senha = document.getElementById('senha').value;
+            const cep = document.getElementById('cep').value;
+            const email = document.getElementById('email').value;
+
+            // Enviar os dados usando Axios
+            axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php', {
+                nome: nome,
+                tipo: tipo,
+                endereco: endereco,
+                telefone: telefone,
+                documento: documento,
+                senha: senha,
+                cep: cep,
+                email: email
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    alert('Usuário cadastrado com sucesso!');
+                    document.getElementById('form-usuario').reset(); // Limpa o formulário
+                    carregarUsuarios(); // Atualiza a lista
+                })
+                .catch(function (error) {
+                    console.error('Erro ao cadastrar usuário:', error);
+                    alert('Erro ao cadastrar usuário.');
+                });
+        }
+
+        function cadastrarUsuario(event) {
+            event.preventDefault();
+            criarUsuario();
+        }
+
+        function atualizarUsuario() {
+            const id = prompt('Digite o ID do usuário a ser atualizado:');
+            if (!id) return;
+
+            const nome = document.getElementById('nome').value;
+            const tipo = document.getElementById('tipo').value;
+            const endereco = document.getElementById('endereco').value;
+            const telefone = document.getElementById('telefone').value;
+            const documento = document.getElementById('documento').value;
+            const senha = document.getElementById('senha').value;
+            const cep = document.getElementById('cep').value;
+            const email = document.getElementById('email').value;
+
+            axios.put(`https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php?id=${id}`, {
+                nome: nome,
+                tipo: tipo,
+                endereco: endereco,
+                telefone: telefone,
+                documento: documento,
+                senha: senha,
+                cep: cep,
+                email: email
+            })
+                .then(function (response) {
+                    console.log(response.data);
+                    alert('Usuário atualizado com sucesso!');
+                    carregarUsuarios();
+                })
+                .catch(function (error) {
+                    console.error('Erro ao atualizar usuário:', error);
+                    alert('Erro ao atualizar usuário.');
+                });
+        }
+
+        function excluirUsuario() {
+            const id = prompt('Digite o ID do usuário a ser excluído:');
+            if (!id) return;
+
+            axios.delete(`https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php?id=${id}`)
+                .then(function (response) {
+                    console.log(response.data);
+                    alert('Usuário excluído com sucesso!');
+                    carregarUsuarios();
+                })
+                .catch(function (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                    alert('Erro ao excluir usuário.');
+                });
+        }
+    </script>
+</body>
+
+</html>

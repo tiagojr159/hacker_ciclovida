@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <title>Cadastro de produtos</title>
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- font awesome style -->
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <!-- nice select -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css"
+    integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
+  <!-- datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="css/responsive.css" rel="stylesheet" />
+
+</head>
+
+<body class="sub_page">
+
+  <!-- Header section -->
+  <div id="header-placeholder"></div>
+  <!-- end header section -->
+
+  <!-- contact section -->
+  <section class="contact_section layout_padding-bottom">
+    <div class="container d-flex justify-content-center">
+      <!-- Box centralizada -->
+      <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%; margin-top: 30px; border-radius: 20px;">
+        <!-- Logo e título centralizados -->
+        <div class="text-center mb-4">
+          <img src="images/Logo blue.svg" alt="Logo da Marca" style="height: 80px; margin-bottom: 10px;">
+          <h3>Cadastro de produtos</h3>
+          <p>Preencha as informações e cadastre seu produto para doação</p>
+        </div>
+
+        <!-- Formulário ARRUMAR O ALINHAMENTO DO CAMPO QUANTIDADE -->
+        <div class="form-cadastro">
+          <form id="form-cadastro" onsubmit="realizarCadastro(event)">
+
+            <div>
+              <label for="nome">Nome do produto:</label>
+              <input required id="nome" type="text" placeholder="Nome do ponto de coleta"
+                style="border-radius: 10px;" />
+            </div>
+
+            <div>
+              <label for="quantidade">Quantidade:</label>
+              <input required type="number" id="quantidade" style="border-radius: 10px; width: 100px;" />
+            </div>
+
+            <div style="margin-top: 10px;">
+              <label for="responsavel">Responsável:</label>
+              <div id="responsavel" style="border-radius: 10px; width: 100px;"></div>
+            </div>
+            <br>
+
+            <div style="margin-top: 10px;">
+              <label for="ponto_coleta">Selecionar Ponto de Coleta:</label><br>
+              <select id="ponto_coleta" required class="form-control" style="border-radius: 10px; width: 100%;">
+                <option value="">Selecione um ponto</option>
+                <option value="0">Nenhum ponto de coleta</option>
+              </select>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+          <label for="descricao">Descrição:</label>
+          <textarea required id="descricao" placeholder="Escreva uma descrição sobre o produto" rows="4"
+            cols="81"></textarea>
+        </div>
+        <div class="btn_cadastro">
+          <button type="submit" class="btn btn-info">Cadastrar produto</button>
+        </div>
+        </form>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- footer section -->
+  <footer class="footer_section">
+    <div class="container">
+      <p>
+        &copy; <span id="displayYear"></span> All Rights Reserved By
+        <a href="https://html.design/">Free Html Templates</a>
+      </p>
+    </div>
+  </footer>
+  <!-- footer section -->
+
+  <!-- jQery -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <!-- bootstrap js -->
+  <script src="js/bootstrap.js"></script>
+  <!-- nice select -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"
+    integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
+  <!-- owl slider -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <!-- datepicker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <!-- custom js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const usuarioLogado = localStorage.getItem('usuarioLogado');
+      const responsavel = document.getElementById('responsavel');
+      responsavel.innerHTML = JSON.parse(usuarioLogado).nome;
+
+
+      axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/ponto_coleta.php')
+        .then(function (response) {
+          const select = document.getElementById('ponto_coleta');
+          select.innerHTML = '';
+
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = 'Selecione um ponto';
+          select.appendChild(defaultOption);
+
+          const defaultOption2 = document.createElement('option');
+          defaultOption2.value = '0';
+          defaultOption2.textContent = 'Nenhum ponto';
+          select.appendChild(defaultOption2);
+
+
+          response.data.forEach(ponto => {
+            const option = document.createElement('option');
+            option.value = ponto.id;
+            option.textContent = ponto.nome_ponto + ' - ' + (ponto.endereco || '');
+            select.appendChild(option);
+          });
+
+          // ESSA LINHA É ESSENCIAL:
+          $('select').niceSelect('update');
+        })
+        .catch(function (error) {
+          console.error('Erro ao carregar pontos de coleta:', error);
+          const select = document.getElementById('ponto_coleta');
+          select.innerHTML = '<option value="">Erro ao carregar pontos</option>';
+        });
+
+
+    });
+
+
+    function realizarCadastro(event) {
+      event.preventDefault();
+
+      const usuarioLogado = localStorage.getItem('usuarioLogado');
+      const responsavel = document.getElementById('responsavel');
+      responsavel.innerHTML = JSON.parse(usuarioLogado).nome;
+      console.log(usuarioLogado);
+      const nome = document.getElementById('nome').value.trim();
+      const quantidade = document.getElementById('quantidade').value.trim();
+      const descricao = document.getElementById('descricao').value.trim();
+      const id_ponto = document.getElementById('ponto_coleta').value;
+      const id_user = JSON.parse(usuarioLogado).id; // <- aqui sim
+
+      if (!id_user || !id_ponto) {
+        alert("Usuário ou ponto de coleta não está definido.");
+        return;
+      }
+
+      const dadosCadastro = {
+        nome,
+        quantidade: parseInt(quantidade),
+        descricao,
+        id_user: parseInt(id_user),
+        id_ponto: parseInt(id_ponto),
+        valor: 0.00
+      };
+
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/item.php', dadosCadastro)
+        .then(function () {
+          alert('Produto cadastrado com sucesso!');
+          window.location.href = 'lista_produtos.html';
+          document.getElementById('form-cadastro').reset();
+        })
+        .catch(function (error) {
+          console.error('Erro ao realizar cadastro:', error);
+          alert('Erro ao realizar cadastro. Tente novamente.');
+        });
+
+    }
+
+  </script>
+
+  <script src="js/headerLoader.js" defer></script>
+</body>
+
+</html>

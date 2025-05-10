@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Editar Perfil</title>
+
+  <!-- Estilos externos -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+
+  <!-- Estilos internos -->
+  <style>
+    .card-custom {
+      max-width: 800px;
+      width: 100%;
+      margin-top: 30px;
+      border-radius: 20px;
+    }
+
+    .logo-img {
+      height: 80px;
+      margin-bottom: 10px;
+    }
+
+    .titulo-perfil {
+      font-weight: 700;
+    }
+
+    .btn-salvar {
+      border: none;
+      text-transform: uppercase;
+      display: inline-block;
+      padding: 15px 65px;
+      background-color: #659339;
+      color: #ffffff;
+      border-radius: 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body class="sub_page">
+          <!-- Header section -->
+          <div id="header-placeholder"></div>
+          <!-- end header section -->
+
+
+  <!-- Editar Perfil Section -->
+  <section class="contact_section layout_padding-bottom">
+    <div class="container d-flex justify-content-center">
+      <div class="card shadow-lg p-5 card-custom w-100" style="max-width: 900px; border-radius: 20px;">
+        <div class="text-center mb-4">
+          <img src="images/img_editar.png" alt="Logo da Marca" class="logo-img" style="height: 80px;">
+          <h3 class="mb-2 titulo-perfil">Atualize seu Perfil</h3>
+          <p class="text-muted">Mantenha suas informações sempre atualizadas para uma melhor experiência.</p>
+        </div>
+
+        <form id="form-editar" onsubmit="editarPerfil(event)">
+          <input type="hidden" id="documento_original">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>Nome completo</label>
+              <input type="text" id="nome" class="form-control" placeholder="Digite seu nome" required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Email</label>
+              <input type="email" id="email" class="form-control" placeholder="Seu e-mail" required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Telefone</label>
+              <input type="text" id="telefone" class="form-control" placeholder="(00) 00000-0000" required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Tipo de Pessoa</label>
+              <select id="tipo" class="form-control">
+                <option value="fisica">Pessoa Física</option>
+                <option value="juridica">Pessoa Jurídica</option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Documento (CPF/CNPJ)</label>
+              <input type="text" id="documento" class="form-control" placeholder="Informe o CPF ou CNPJ" required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Endereço</label>
+              <input type="text" id="endereco" class="form-control" placeholder="Rua, número, bairro..." required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>CEP</label>
+              <input type="text" id="cep" class="form-control" placeholder="00000-000" required>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label>Senha</label>
+              <input type="password" id="senha" class="form-control" placeholder="Escolha uma senha segura" required>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-lg btn-success px-5 py-2 btn-salvar">
+              Salvar Alterações
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer_section">
+    <div class="container">
+      <p>© <span id="displayYear"></span>© 2025 All Rights Reserved By Free Html Templates</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      // Máscaras
+      $('#telefone').mask('(00) 00000-0000');
+      $('#cep').mask('00000-000');
+
+      // Ajustar máscara do documento com base no tipo de pessoa
+      $('#tipo').change(function () {
+        const tipo = $(this).val();
+        $('#documento').val(''); // Limpa o campo ao mudar o tipo
+        if (tipo === 'fisica') {
+          $('#documento').mask('000.000.000-00');
+        } else {
+          $('#documento').mask('00.000.000/0000-00');
+        }
+      });
+
+      // Carregar dados do usuário
+      carregarDadosUsuario();
+    });
+
+    function carregarDadosUsuario() {
+      let usuarioLog = localStorage.getItem('usuarioLogado');
+      if (!usuarioLog) {
+        alert('Usuário não está logado. Faça login para editar o perfil.');
+        window.location.href = 'login.html';
+        return;
+      }
+      usuarioLog = JSON.parse(usuarioLog);
+      const id_user = usuarioLog.id_user;
+      axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php', {
+        params: { id_user }
+      })
+        .then(response => {
+          const dados = response.data;
+          console.log(dados);
+          if (dados.success && dados.usuario) {
+            $('#nome').val(dados.usuario.nome);
+            $('#email').val(dados.usuario.email);
+            $('#telefone').val(dados.usuario.telefone);
+            $('#tipo').val(dados.usuario.tipoPessoa);
+            $('#documento').val(dados.usuario.documento);
+            $('#endereco').val(dados.usuario.endereco);
+            $('#cep').val(dados.usuario.cep);
+            $('#senha').val(dados.usuario.senha); // Senha pode não ser retornada por segurança
+            $('#documento_original').val(dados.usuario.documento);
+
+            // Aplica a máscara correta ao carregar
+            if (dados.usuario.tipo === 'fisica') {
+              $('#documento').mask('000.000.000-00');
+              $('#tipo').val('fisica'); // valor do select
+            } else {
+              $('#documento').mask('00.000.000/0000-00');
+              $('#tipo').val('juridica'); // valor do select
+            }
+          } else {
+            alert('Erro ao carregar dados do perfil.');
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao carregar dados:', error);
+          alert('Erro ao carregar perfil. Tente novamente.');
+        });
+    }
+
+    function editarPerfil(event) {
+      event.preventDefault();
+
+      const documentoOriginal = document.getElementById('documento_original').value;
+      if (!documentoOriginal) {
+        alert('Erro: documento do usuário não encontrado.');
+        return;
+      }
+
+
+
+      const dados = {
+        documento_original: documentoOriginal,
+        nome: document.getElementById('nome').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
+        tipoPessoa: document.getElementById('tipo').value,
+        documento: document.getElementById('documento').value.trim(),
+        endereco: document.getElementById('endereco').value.trim(),
+        cep: document.getElementById('cep').value.trim(),
+        senha: document.getElementById('senha').value
+      };
+      console.log('Dados a serem enviados:', dados);
+
+      // Validação básica
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(dados.email)) {
+        alert('Email inválido!');
+        return;
+      }
+      if (dados.senha && dados.senha.length < 8) {
+        alert('A senha deve ter no mínimo 8 caracteres!');
+        return;
+      }
+
+      // Desativa o botão para evitar múltiplos envios
+      const btnSalvar = document.querySelector('.btn-salvar');
+      btnSalvar.disabled = true;
+      // axios.post('http://localhost/ciclovida/api_php/usuarios.php', dados)
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php', dados)
+        .then(response => {
+          if (response.data.success) {
+            alert('Perfil atualizado com sucesso!');
+            // Atualiza o documento no localStorage, caso tenha mudado
+            localStorage.setItem('userDocumento', dados.documento);
+          } else {
+            alert('Erro: ' + (response.data.message || 'Não foi possível atualizar o perfil.'));
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar perfil:', error);
+          alert('Erro ao salvar alterações. Tente novamente.');
+        })
+        .finally(() => {
+          btnSalvar.disabled = false;
+        });
+    }
+  </script>
+  <script src="js/headerLoader.js" defer></script>
+</body>
+
+</html>

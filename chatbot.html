@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="chatbot, hospital, treatment" />
+  <meta name="description" content="Chatbot para assistência em tratamentos hospitalares" />
+  <meta name="author" content="Seu Nome" />
+
+  <title>Chatbot - CicloVida</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Owl Carousel -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- Font Awesome -->
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <!-- Nice Select -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
+  <!-- Datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+  <!-- Custom Styles -->
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- Custom CSS for Chat -->
+  <style>
+    .chat-window {
+      max-height: 400px;
+      overflow-y: auto;
+      background-color: #f8f9fa;
+      border-radius: 10px;
+    }
+    .chat-message.user .chat-bubble {
+      background-color: #007bff;
+      color: white;
+      text-align: right;
+      margin-left: 20%;
+      padding: 10px;
+      border-radius: 10px 10px 0 10px;
+      margin-bottom: 10px;
+    }
+    .chat-message.bot .chat-bubble {
+      background-color: #e9ecef;
+      color: black;
+      text-align: left;
+      margin-right: 20%;
+      padding: 20px;
+      border-radius: 0px 10px 10px 0;
+      margin-bottom: 10px;
+    }
+    .btn-teal {
+      background-color: #20c997;
+      color: white;
+    }
+    .btn-teal:hover {
+      background-color: #17a589;
+    }
+    .rounded-start-pill {
+      border-top-left-radius: 50rem;
+      border-bottom-left-radius: 50rem;
+    }
+    .rounded-end-pill {
+      border-top-right-radius: 50rem;
+      border-bottom-right-radius: 50rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero_area">
+      <!-- Header section -->
+  <div id="header-placeholder"></div>
+  <!-- end header section -->
+
+    <!-- Treatment Section -->
+    <section class="treatment_section layout_padding">
+      <div class="container">
+        <div class="heading_container heading_center">
+          <h2>Assistente <span>Virtual</span></h2>
+          <p>Tem dúvidas sobre a plataforma ou sobre o projeto? Não se preocupe, aqui é o seu lugar de informação.</p>
+        </div>
+        <div class="row justify-content-center g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="box">
+              <div class="img-box">
+                <img src="images/ciclo.jpg" alt="imagem de pessoas em um ciclo se abraçando" style="width: 300px;">
+              </div>
+              <div class="detail-box">
+                <h4>O que é o ciclo vida?</h4>
+                <p>Pergunte à assistente sobre a criação, motivação do projeto e a problemática que buscamos resolver.</p>            
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="box">
+              <div class="img-box">
+                <img src="images/pensativos.jpg" alt="Eye Care" style="width: 200px; margin-left: 25px;" >
+              </div>
+              <div class="detail-box">
+                <h4>Como usar o sistema?</h4>
+                <p>Tem dúvidas sobre como usar a plataforma? Tenha todas as respostas aqui.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="box">
+              <div class="img-box">
+                <img src="images/chef.jpg" alt="Pediatrician Clinic"style="width: 200px;" >
+              </div>
+              <div class="detail-box">
+                <h4>Motivos de uso?</h4>
+                <p>Analise com detalhes o que faz o uso da plataforma ser indispensável para garantir agilidade e segurança no fluxo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Treatment Section -->
+
+    <!-- Chatbot Section -->
+    <section class="chatbot-section py-5">
+      <div class="container">
+        <div class="text-center mb-4">
+          <img src="images/avatar-mulher.png" alt="Avatar" class="rounded-circle" style="width: 80px;">
+          <h5 class="mt-3">Olá! Sou sua assistente virtual da CicloVida. Como posso ajudar?</h5>
+        </div>
+
+        <!-- Chat Window -->
+        <div id="chat-window" class="chat-window mb-4 p-3 border rounded"></div>
+
+        <!-- Quick Questions -->
+        <div class="quick-questions d-flex flex-wrap justify-content-center mb-3">
+          <button class="btn btn-teal m-2" data-message="O que é o SEAU?">O que é o SEAU?</button>
+          <button class="btn btn-teal m-2" data-message="Onde estão localizadas as bombonas?">Onde estão localizadas as bombonas?</button>
+          <button class="btn btn-teal m-2" data-message="O que cada cor no mapa significa?">O que cada cor no mapa significa?</button>
+          <button class="btn btn-teal m-2" data-message="Quais tipos de usuários existem no sistema?">Quais tipos de usuários existem no sistema?</button>
+        </div>
+
+        <!-- Chat Input -->
+        <form id="chat-form" class="chat-input-group d-flex justify-content-center">
+          <input id="user-input" type="text" class="form-control w-75 rounded-start-pill" placeholder="Pergunte alguma coisa..." aria-label="Mensagem do usuário">
+          <button id="send-btn" type="submit" class="btn btn-primary rounded-end-pill" style="background-color: #007bff;">
+            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+    <!-- End Chatbot Section -->
+
+    <!-- Footer Section -->
+    <footer class="footer_section">
+      <div class="container">
+        <p>
+          © <span id="displayYear"></span> Todos os direitos reservados por
+          <a href="https://html.design/">Free Html Templates</a>
+        </p>
+      </div>
+    </footer>
+    <!-- End Footer Section -->
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <script src="js/custom.js"></script>
+
+  <script>
+    // Display logged-in user
+    const usuarioLogado = localStorage.getItem('usuarioLogado');
+    const labelUsuario = document.getElementById('labelUsuario');
+    if (usuarioLogado) {
+      try {
+        const user = JSON.parse(usuarioLogado);
+        labelUsuario.textContent = `Usuário: ${user.documento || 'Desconhecido'}`;
+      } catch (e) {
+        labelUsuario.textContent = 'Erro ao carregar usuário';
+      }
+    } else {
+      labelUsuario.textContent = 'Usuário não logado';
+    }
+
+    // Update footer year
+    document.getElementById('displayYear').textContent = new Date().getFullYear();
+  </script>
+
+  <script>
+    const chatWindow = document.getElementById('chat-window');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const quickButtons = document.querySelectorAll('.quick-questions button');
+
+    // Append message to chat window
+    function appendMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('chat-message', sender);
+      msgDiv.innerHTML = `<div class="chat-bubble ${sender}">${text}</div>`;
+      chatWindow.appendChild(msgDiv);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // Send message to backend
+    async function sendMessage(text) {
+      if (!text.trim()) return;
+
+      appendMessage('user', text);
+      userInput.value = ''; 
+
+      try {
+        const response = await axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/chat.php', { message: text }, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const reply = response.data.reply || 'Sem resposta do servidor.';
+        appendMessage('bot', reply);
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        appendMessage('bot', 'Erro ao comunicar com o servidor. Tente novamente.');
+      }
+    }
+
+    // Form submit handler
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      sendMessage(userInput.value);
+    });
+
+    // Quick buttons handler
+    quickButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const message = button.getAttribute('data-message');
+        sendMessage(message);
+      });
+    });
+  </script>
+  <script src="js/headerLoader.js" defer></script>  
+</body>
+</html>

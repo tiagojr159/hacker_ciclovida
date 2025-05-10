@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Cadastro</title>
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+
+  <style>
+    .form-cadastro form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 40px;
+    }
+    
+    .form-cadastro form div,
+    .form-cadastro form #cnpjField,
+    .form-cadastro form #senha,
+    .form-cadastro form #senha2 {
+      width: 100%;
+    }
+
+    .form-cadastro input[type="text"],
+    .form-cadastro input[type="email"],
+    .form-cadastro input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .radio-tipo {
+      grid-column: span 2;
+    }
+
+    #cnpjField,
+    .links-cadastro,
+    .btn_cadastro {
+      grid-column: span 2;
+    }
+
+    .links-cadastro {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn_cadastro {
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .form-cadastro form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="sub_page">
+  <!-- Header section -->
+  <div id="header-placeholder"></div>
+  <!-- end header section -->
+
+  <section class="contact_section layout_padding-bottom">
+    <div class="container d-flex justify-content-center">
+      <div class="card shadow-lg p-4" style="max-width: 900px; width: 100%; margin-top: 30px; border-radius: 20px;">
+        <div class="text-center mb-4">
+          <img src="images/Logo blue.svg" alt="Logo da Marca" style="height: 80px; margin-bottom: 10px;">
+          <h3>Seja bem-vindo(a) ao Ciclo Vivo</h3>
+          <p>Preencha os dados abaixo e crie sua conta</p>
+        </div>
+
+<div class="form-cadastro">
+  <form id="form-cadastro" onsubmit="realizarCadastro(event)">
+    <div class="form-group">
+      <label for="nome">Nome da instituição:</label>
+      <input required id="nome" type="text" placeholder="Nome completo ou nome da empresa" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input required id="email" type="email" placeholder="Email" />
+    </div>
+    <div class="form-group">
+      <label for="telefone">Telefone:</label>
+      <input required type="text" id="telefone" placeholder="Telefone para contato" />
+    </div>
+    <div class="radio-tipo btn-group" role="group" aria-label="Tipo de Pessoa">
+      <input type="hidden" name="tipoPessoa" id="tipoPessoa" value="escola">
+      <button type="button" class="btn btn-outline-primary active" onclick="selecionarTipoPessoa('escola', this)">Escola</button>
+      <button type="button" class="btn btn-outline-primary" onclick="selecionarTipoPessoa('cozinha', this)">Cozinha</button>
+      <button type="button" class="btn btn-outline-primary" onclick="selecionarTipoPessoa('restaurante', this)">Restaurante</button>
+      <button type="button" class="btn btn-outline-primary" onclick="selecionarTipoPessoa('horta', this)">Horta</button>
+    </div>
+    <div class="form-group" id="cnpjField">
+      <label for="cnpj">CNPJ:</label>
+      <input type="text" id="cnpj" placeholder="CNPJ" />
+    </div>
+    <div class="form-group">
+      <label for="endereco">Endereço:</label>
+      <input required id="endereco" type="text" placeholder="Endereço" />
+    </div>
+    <div class="form-group">
+      <label for="cep">CEP:</label>
+      <input id="cep" type="text" placeholder="CEP" />
+    </div>
+    <div class="form-row">
+      <div class="form-group half">
+        <label for="password">Senha:</label>
+        <input required type="password" id="password" placeholder="Senha" />
+      </div>
+      <div class="form-group half">
+        <label for="password_confirm">Confirme sua senha:</label>
+        <input required type="password" id="password_confirm" placeholder="Confirme sua senha" />
+      </div>
+    </div>
+    <div class="links-cadastro">
+      <p>Já possui uma conta? <a href="login.html" class="link_login">Clique aqui</a></p>
+    </div>
+    <div class="btn_cadastro">
+      <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </div>
+  </form>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer_section">
+    <div class="container">
+      <p>
+        &copy; <span id="displayYear"></span> All Rights Reserved By
+        <a href="https://html.design/">Free Html Templates</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#telefone').mask('(00) 00000-0000');
+      $('#cnpj').mask('00.000.000/0000-00');
+    });
+
+    function selecionarTipoPessoa(tipo, botaoSelecionado) {
+      $('#tipoPessoa').val(tipo);
+      $('.radio-tipo .btn').removeClass('active');
+      $(botaoSelecionado).addClass('active');
+    }
+
+    function realizarCadastro(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+      const tipoPessoa = document.getElementById('tipoPessoa').value;
+      const endereco = document.getElementById('endereco').value.trim();
+      const documento = document.getElementById('cnpj').value.trim();
+      const cep = document.getElementById('cep').value.trim();
+      const senha = document.getElementById('password').value;
+      const senhaConfirm = document.getElementById('password_confirm').value;
+
+      if (senha !== senhaConfirm) {
+        alert('As senhas não coincidem!');
+        return;
+      }
+
+      if (!documento) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
+      }
+
+      const dadosCadastro = {
+        nome,
+        email,
+        telefone,
+        tipoPessoa,
+        documento,
+        endereco,
+        senha,
+        cep
+      };
+      //axios.post('http://localhost/ciclovida/api_php/usuarios.php', dadosCadastro)
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php', dadosCadastro)
+        .then(function (response) {
+          alert('Cadastro realizado com sucesso!');
+          window.location.href = 'login.html';
+        })
+        .catch(function (error) {
+          console.error('Erro ao realizar cadastro:', error);
+          alert('Erro ao realizar cadastro. Tente novamente.');
+        });
+    }
+  </script>
+  <script src="js/headerLoader.js" defer></script>  
+</body>
+
+</html>

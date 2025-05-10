@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Lista de produtos para doação</title>
+
+  <!-- CSS Bootstrap -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <!-- Fontes -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css" />
+
+  <!-- Estilos personalizados -->
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+</head>
+
+<body class="sub_page">
+  <!-- Header section -->
+  <div id="header-placeholder"></div>
+  <!-- end header section -->
+
+  <section class="contact_section layout_padding-bottom">
+    <div class="container">
+      <div class="card shadow-lg p-4" style="margin-top: 30px; border-radius: 20px;">
+        <div class="text-center mb-4">
+          <img src="images/Logo blue.svg" alt="Logo da Marca" style="height: 80px; margin-bottom: 10px;">
+          <h3>Produtos de Compostagem</h3>
+          <p>Veja abaixo os Produtos de Compostagem disponíveis</p>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Lista de Produtos</h5>
+          <a href="cadastro_produto.html" class="btn btn-info">
+            <i class="fa fa-plus"></i> Cadastrar Produto
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table id="tabela-itens" class="table table-bordered table-striped dt-responsive nowrap" width="100%">
+            <thead class="thead-dark">
+              <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal flutuante -->
+  <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Detalhes do Produto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
+          <p><strong>Descrição:</strong> <span id="modal-descricao"></span></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-success" onclick="solicitarItem()">Solicitar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer_section">
+    <div class="container">
+      <p>© <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- DataTables -->
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+
+  <script>
+    let usuarios = [];
+    let pontos = [];
+    let currentItem = null; // Armazena o item atual para uso na solicitação
+
+    // Carrega dados extras (usuários e pontos)
+    axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/usuarios.php')
+      .then(response => { usuarios = response.data; });
+    axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/ponto_coleta.php')
+      .then(response => { pontos = response.data; });
+
+    // Função para abrir o modal e preencher com os dados do item
+    function abrirModal(item) {
+      currentItem = item; // Armazena o item atual
+      $('#modal-nome').text(item.nome || 'Sem nome');
+      $('#modal-descricao').text(item.descricao || 'Sem descrição');
+      $('#infoModal').modal('show'); // Abre o modal
+    }
+
+    // Função para solicitar o item
+    function solicitarItem() {
+      if (!currentItem) {
+        alert('Erro: Nenhum item selecionado.');
+        return;
+      }
+
+      // Supondo que o ID do usuário logado esteja disponível (ex.: armazenado no localStorage)
+      const idUser = localStorage.getItem('userId') || 1; // Substitua por lógica real de autenticação
+
+      // Verifica se as propriedades necessárias existem
+      if (!currentItem.id || !currentItem.id_ponto) {
+        alert('Erro: Informações do item incompletas.');
+        return;
+      }
+
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/item.php', {
+        acao: 'solicitar',
+        id_user: idUser,
+        id_item: currentItem.id,
+        id_ponto: currentItem.id_ponto,
+        status: 1
+      })
+        .then(function (response) {
+          alert('Item solicitado com sucesso!');
+          $('#infoModal').modal('hide'); // Fecha o modal
+          window.location.reload(); // Recarrega a página
+        })
+        .catch(function (error) {
+          console.error('Erro ao solicitar item:', error);
+          alert('Erro ao solicitar o item. Tente novamente.');
+        });
+    }
+
+    $(document).ready(function () {
+      axios.get('https://ciclovida.ki6.com.br/ciclovida/api_php/item.php')
+        .then(function (response) {
+          const dados = response.data;
+          if ($.fn.DataTable.isDataTable('#tabela-itens')) {
+            $('#tabela-itens').DataTable().clear().destroy();
+          }
+
+          $('#tabela-itens').DataTable({
+            data: dados,
+            responsive: true,
+            columns: [
+              { data: 'nome' },
+              { data: 'descricao', defaultContent: 'Sem descrição' },
+              { data: 'quantidade' },
+              {
+                data: null,
+                render: function (data, type, row) {
+                  return `<button class="btn btn-success btn-sm" onclick='abrirModal(${JSON.stringify(row)})'>Solicitar</button>`;
+                }
+              }
+            ],
+            language: {
+              url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+            }
+          });
+        })
+        .catch(function (error) {
+          console.error('Erro ao carregar dados:', error);
+          alert('Erro ao carregar os itens. Tente novamente mais tarde.');
+        });
+    });
+  </script>
+
+  <script src="js/headerLoader.js" defer></script>
+</body>
+
+</html>

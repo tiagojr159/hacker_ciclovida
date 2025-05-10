@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="Login" />
+  <meta name="description" content="Página de login" />
+  <title>Entrar</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/responsive.css" rel="stylesheet" />
+
+  <style>
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f9f9f9;
+    }
+
+    .form-box {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      margin-top: 40px;
+      position: relative;
+    }
+
+    .img_login {
+      display: block;
+      margin: 0 auto 30px;
+      max-width: 100%;
+      width: 300px;
+      border-radius: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .btn-primary {
+      border: none;
+      text-transform: uppercase;
+      display: inline-block;
+      padding: 15px 65px;
+      background-color: #659339;
+      color: #ffffff;
+      border-radius: 0;
+      font-weight: bold;
+    }
+
+    .btn-primary:hover {
+      background-color: #3a5421;
+    }
+  </style>
+</head>
+
+    <!-- Header section -->
+    <div id="header-placeholder"></div>
+    <!-- end header section -->
+
+<body class="sub_page">
+
+  <section class="contact_section layout_padding-bottom">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="form-box">
+            <img class="img_login" src="images/img_para_login.png" alt="Imagem de Login">
+
+            <form id="form-login" onsubmit="fazerLogin(event)">
+              <div class="form-group">
+                <input type="text" name="documento" id="documento" class="form-control" placeholder="CPF/CNPJ" required>
+              </div>
+              <div class="form-group">
+                <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" required>
+              </div>
+             
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Entrar</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer_section mt-5">
+    <div class="container text-center">
+      <p>
+        &copy; <span id="displayYear"></span> Todos os direitos reservados - CicloVida
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+
+
+  <script>
+    function fazerLogin(event) {
+      var usuarioLogado = localStorage.getItem('usuarioLogado');
+      if (usuarioLogado) {
+        alert('Você já está logado!');
+        window.location.href = 'index.html';
+        return;
+      }
+      event.preventDefault();
+      const documento = document.getElementById('documento').value;
+      const senha = document.getElementById('senha').value;
+
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/login.php', {
+        documento: documento,
+        senha: senha
+      })
+        .then(function (response) {
+        //  alert('Login realizado com sucesso!');
+          localStorage.setItem('usuarioLogado', JSON.stringify(response.data.usuario));
+          window.location.href = 'index.html';
+        })
+        .catch(function (error) {
+          alert('Documento ou senha inválidos!');
+        });
+    }
+
+    function logout() {
+      alert('Logout realizado com sucesso!');
+      localStorage.removeItem('usuarioLogado');
+      window.location.href = 'login.html';
+    }
+  </script>
+  <script src="js/headerLoader.js" defer></script> 
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <title>Cadastro de pontos de coleta</title>
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- font awesome style -->
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <!-- nice select -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css"
+    integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
+  <!-- datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="css/responsive.css" rel="stylesheet" />
+
+</head>
+
+<body class="sub_page">
+
+          <!-- Header section -->
+          <div id="header-placeholder"></div>
+          <!-- end header section -->
+
+  <section class="book_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <form id="form-cadastro" onsubmit="realizarCadastro(event)">
+            <h4>
+              CADASTRO <span>PONTO DE COLETA</span>
+            </h4>
+  
+            <div class="form-row">
+              <div class="form-group col-lg-6">
+                <label for="nome">Nome do ponto de coleta:</label>
+                <input required id="nome" type="text" class="form-control" placeholder="Nome do ponto de coleta">
+              </div>
+              <div class="form-group col-lg-6">
+                <label for="telefone">Telefone:</label>
+                <input required type="text" id="telefone" class="form-control" placeholder="Telefone para contato">
+              </div>
+            </div>
+  
+            <div class="form-row">
+              <div class="form-group col-lg-6">
+                <label for="responsavel">Responsável:</label>
+                <input type="text" id="responsavel" class="form-control" placeholder="Responsável">
+              </div>
+              <div class="form-group col-lg-6">
+                <label for="endereco">Endereço:</label>
+                <input required id="endereco" type="text" class="form-control" placeholder="Endereço">
+              </div>
+            </div>
+  
+            <div class="form-row">
+              <div class="form-group col-lg-6">
+                <label for="latitude">Latitude:</label>
+                <input required id="latitude" type="text" class="form-control" placeholder="Latitude">
+              </div>
+              <div class="form-group col-lg-6">
+                <label for="longitude">Longitude:</label>
+                <input required id="longitude" type="text" class="form-control" placeholder="Longitude">
+              </div>
+            </div>
+  
+            <div class="btn-box">
+              <button type="submit" class="btn">Cadastrar ponto de coleta</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- footer section -->
+  <footer class="footer_section">
+    <div class="container">
+      <p>
+        &copy; <span id="displayYear"></span> All Rights Reserved By
+        <a href="https://html.design/">Free Html Templates</a>
+      </p>
+    </div>
+  </footer>
+  <!-- footer section -->
+
+  <!-- jQery -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <!-- bootstrap js -->
+  <script src="js/bootstrap.js"></script>
+  <!-- nice select -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"
+    integrity="sha256-Zr3vByTlMGQhvMfgkQ5BtWRSKBGa2QlspKYJnkjZTmo=" crossorigin="anonymous"></script>
+  <!-- owl slider -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <!-- datepicker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <!-- custom js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    var usuarioLogado = localStorage.getItem('usuarioLogado');
+
+    $(document).ready(function () {
+      $('#telefone').mask('(00) 00000-0000');
+    });
+
+    function realizarCadastro(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+      const responsavel = JSON.parse(usuarioLogado).nome;
+      const endereco = document.getElementById('endereco').value.trim();
+      const latitude = document.getElementById('latitude').value.trim();
+      const longitude = document.getElementById('longitude').value.trim();
+
+      const dadosCadastro = {
+        nome,
+        telefone,
+        responsavel,
+        endereco,
+        latitude,
+        longitude
+      };
+
+      axios.post('https://ciclovida.ki6.com.br/ciclovida/api_php/ponto_coleta.php', dadosCadastro)
+        .then(function (response) {
+          alert('Ponto de coleta cadastrado com sucesso!');
+          document.getElementById('form-cadastro').reset();
+        })
+        .catch(function (error) {
+          console.error('Erro ao realizar cadastro:', error);
+          alert('Erro ao realizar cadastro. Tente novamente.');
+        });
+    }
+  </script>
+  <script src="js/headerLoader.js" defer></script>
+</body>
+
+</html>
